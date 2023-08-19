@@ -9,10 +9,12 @@ namespace PackageTracker_API.Controllers
     public class PackageController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration; 
 
-        public PackageController(IHttpClientFactory httpClientFactory)
+        public PackageController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
         [HttpGet("{city}")]
         public async Task<IActionResult> GetWeather(string city)
@@ -20,7 +22,7 @@ namespace PackageTracker_API.Controllers
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                string apiKEY = "0accd00ee96f87579969974f2b12729d";
+                string apiKEY = _configuration["ApiSettings:WeatherApiKey"];
                 string apiURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKEY;
                 var response = await client.GetAsync(apiURL);
                 if (response.IsSuccessStatusCode)
